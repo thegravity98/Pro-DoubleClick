@@ -1,8 +1,8 @@
 {
 	"manifest_version": 3,
-	"name": "Pro dbClick",
-	"version": "14.1.2023",
-	"description": "Double Click on Google, Brave & YouAI Search results will open in new background tab and other links will open in new foreground tab.",
+	"name": "Pro DoubleClick",
+	"version": "24.11.9",
+	"description": "Double Click on Google, Brave & DuckDuckGo Search results will open in new background tab and other links will open in new foreground tab.",
 	"icons": {
 		"128": "icon 128.png"
 	},
