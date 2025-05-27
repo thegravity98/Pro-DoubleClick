@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pro DoubleClick</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        @import url("https://unpkg.com/tailwindcss@^2/dist/base.min.css");
+        @import url("https://unpkg.com/tailwindcss@^2/dist/components.min.css");
+        @import url("https://unpkg.com/tailwindcss@^2/dist/utilities.min.css");
+
+        body { 
+            width: 400px; 
+            padding: 10px; 
+            font-family: 'Rubik', sans-serif;
+            background-color: #f3f4f6;
+        }
+        .title-container { /* New style for title and icon alignment */
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem; /* Equivalent to mb-4 */
+        }
+        .title-container img {
+            width: 32px; /* Adjust size as needed */
+            height: 32px; /* Adjust size as needed */
+            margin-right: 0.75rem; /* Equivalent to mr-3 */
+        }
+        .toggle-container {
+            display: flex;
+            align-items: center; 
+            justify-content: space-between;
+            width: 100%;
+            padding: 8px 0;
+        }
+        .toggle-label {
+            flex-grow: 1;
+            font-size: 0.9rem;
+            color: #374151;
+            word-wrap: break-word;
+            white-space: normal;
+            line-height: 1.4;
+            margin-right: 8px; 
+        }
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 48px;
+            height: 24px;
+            margin-left: 8px; 
+            flex-shrink: 0; 
+        }
+        .toggle-container > button {
+            flex-shrink: 0; 
+            margin-left: 8px; 
+            white-space: nowrap; 
+        }
+        .toggle {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #d1d5db;
+            transition: .4s;
+            border-radius: 24px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        .toggle:checked + .slider {
+            background-color: #2563eb;
+        }
+        .toggle:checked + .slider:before {
+            transform: translateX(24px);
+        }
+        .toggle:disabled + .slider {
+            background-color: #e5e7eb;
+            cursor: not-allowed;
+        }
+        .toggle:disabled + .slider:before { 
+            background-color: #bdbdbd;
+        }
+        .site-status { 
+            font-size: 0.9em; 
+            color: #6b7280;
+            margin-top: 4px;
+            padding: 8px;
+            background-color: #e5e7eb; 
+            border-radius: 8px;
+            position: relative; 
+        }
+        #siteStatusTextOutput {
+            display: block; 
+            margin-bottom: 5px; 
+        }
+        .remove-site-btn {
+            background-color: #ef4444;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 2px 6px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            display: none; 
+        }
+        .remove-site-btn:hover {
+            background-color: #dc2626;
+        }
+        .site-preferences-modal {
+            display: none;
+            position: fixed;
+            z-index: 1001;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+            justify-content: center;
+            align-items: center;
+        }
+        .site-preferences-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 90%;
+            max-width: 500px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        .site-list {
+            margin: 10px 0;
+        }
+        .site-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px;
+            margin: 4px 0;
+            background-color: #f3f4f6;
+            border-radius: 6px;
+        }
+        .site-item button {
+            background-color: #ef4444;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 4px 8px;
+            font-size: 0.75rem;
+            cursor: pointer;
+        }
+        .site-item button:hover {
+            background-color: #dc2626;
+        }
+        .message-modal {
+            display: none; 
+            position: fixed; 
+            z-index: 1000; 
+            left: 0;
+            top: 0;
+            width: 100%; 
+            height: 100%; 
+            overflow: auto; 
+            background-color: rgba(0,0,0,0.4); 
+            justify-content: center;
+            align-items: center;
+        }
+        .message-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 300px;
+            border-radius: 12px; 
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+            text-align: center;
+        }
+        .message-content button {
+            background-color: #2563eb;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+        .message-content button:hover {
+            background-color: #1d4ed8;
+        }
+        .connect-section {
+            margin-top: 20px;
+            padding: 16px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            text-align: center;
+            border-top: 1px solid #e5e7eb;
+        }
+        .connect-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 12px;
+            font-family: 'Rubik', sans-serif;
+        }
+        .social-icons {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+        }
+        .social-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            color: white;
+            text-decoration: none;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            font-size: 18px;
+        }
+        .social-icon:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .github-icon {
+            background-color: #333;
+        }
+        .github-icon:hover {
+            background-color: #24292e;
+        }
+        .twitter-icon {
+            background-color: #333;
+        }
+        .twitter-icon:hover {
+            background-color: #24292e;
+        }
+        .threads-icon {
+            background-color: #333;
+        }
+        .threads-icon:hover {
+            background-color: #24292e;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div class="p-4 bg-white rounded-lg shadow-md">
+        <!-- MODIFIED: Title with Icon -->
+        <div class="title-container">
+            <img src="icon_128.png" alt="Pro DoubleClick Icon">
+            <h1 class="text-xl font-extrabold text-gray-800">Pro DoubleClick</h1>
+        </div>
+        
+        <div id="siteStatus" class="site-status mb-4">
+            <span id="siteStatusTextOutput"></span> 
+            <button id="removeSiteBtn" class="remove-site-btn">Remove</button> 
+        </div>
+
+        <div class="space-y-3">
+            <div class="toggle-container">
+                <label class="toggle-label">Open all links in new foreground tab</label>
+                <div class="toggle-switch">
+                    <input type="checkbox" id="opt1" class="toggle" />
+                    <label for="opt1" class="slider"></label>
+                </div>
+            </div>
+
+            <div class="toggle-container">
+                <label class="toggle-label">Open all links in new background tab</label>
+                <div class="toggle-switch">
+                    <input type="checkbox" id="opt2" class="toggle" />
+                    <label for="opt2" class="slider"></label>
+                </div>
+            </div>
+
+            <div class="toggle-container">
+                <label class="toggle-label">Open search engine links in new foreground tab & non-search engine links in new background tab</label>
+                <div class="toggle-switch">
+                    <input type="checkbox" id="opt_seF_nseB" class="toggle" />
+                    <label for="opt_seF_nseB" class="slider"></label>
+                </div>
+            </div>
+
+            <div class="toggle-container">
+                <label class="toggle-label">Open search engine links in new background tab & non-search engine links in new foreground tab</label>
+                <div class="toggle-switch">
+                    <input type="checkbox" id="opt_seB_nseF" class="toggle" />
+                    <label for="opt_seB_nseF" class="slider"></label>
+                </div>
+            </div>
+
+            <div class="toggle-container">
+                <label class="toggle-label">Add this site to open links in background tab</label>
+                <!-- MODIFIED: Color swapped -->
+                <button id="addSiteBackground" class="bg-purple-500 hover:bg-purple-600 text-white font-semibold py-2 px-4 rounded-lg text-sm transition duration-300 min-w-[100px] whitespace-nowrap">
+                    Add Site
+                </button>
+            </div>
+
+            <div class="toggle-container">
+                <label class="toggle-label">Add this site to open links in foreground tab</label>
+                <!-- MODIFIED: Color swapped -->
+                <button id="addSiteForeground" class="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-4 rounded-lg text-sm transition duration-300 min-w-[100px] whitespace-nowrap">
+                    Add Site
+                </button>
+            </div>
+        </div>
+
+        <div class="mt-6 space-y-2">
+            <button id="saveBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg w-full transition duration-300 ease-in-out transform hover:scale-105">
+                Save Preferences
+            </button>
+            <button id="sitePreferencesBtn" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-lg w-full transition duration-300">
+                Site Preferences
+            </button>
+        </div>
+    </div>
+
+    <div id="messageModal" class="message-modal">
+        <div class="message-content">
+            <p id="messageText" class="text-gray-700 text-lg font-semibold"></p>
+            <button id="closeMessageBtn">OK</button>
+        </div>
+    </div>
+
+    <div id="sitePreferencesModal" class="site-preferences-modal">
+        <div class="site-preferences-content">
+            <h2 class="text-xl font-semibold mb-4 text-gray-800">Site Preferences</h2>
+            
+            <div class="mb-4">
+                <h3 class="text-lg font-regular text-purple-700 mb-2">Foreground Sites</h3>
+                <div id="foregroundSites" class="site-list">
+                    <p class="text-gray-500 text-sm">No sites added for foreground behavior</p>
+                </div>
+            </div>
+            
+            <div class="mb-4">
+                <h3 class="text-lg font-regular text-purple-500 mb-2">Background Sites</h3>
+                <div id="backgroundSites" class="site-list">
+                    <p class="text-gray-500 text-sm">No sites added for background behavior</p>
+                </div>
+            </div>
+            
+            <div class="flex space-x-2 mt-6">
+                <button id="clearAllSites" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded flex-1">
+                    Clear All
+                </button>
+                <button id="closeSitePreferences" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded flex-1">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="connect-section">
+        <div class="connect-title">Connect with us</div>
+        <div class="social-icons">
+            <a href="https://github.com/thegravity98" target="_blank" rel="noopener noreferrer" class="social-icon github-icon" title="GitHub">
+                <i class="fab fa-github"></i>
+            </a>
+            <a href="https://x.com/pranavxmeta" target="_blank" rel="noopener noreferrer" class="social-icon twitter-icon" title="X (Twitter)">
+                <i class="fa-brands fa-x-twitter"></i>
+            </a>
+            <a href="https://www.threads.com/@pranavxmeta" target="_blank" rel="noopener noreferrer" class="social-icon threads-icon" title="Threads">
+                <i class="fa-brands fa-threads"></i>
+            </a>
+        </div>
+    </div>
+
+    <script src="popup.js"></script>
+</body>
+</html>

@@ -1,20 +1,37 @@
 {
 	"manifest_version": 3,
 	"name": "Pro DoubleClick",
-	"version": "24.11.9",
-	"description": "Double Click on Google, Brave & DuckDuckGo Search results will open in new background tab and other links will open in new foreground tab.",
-	"icons": {
-		"128": "icon 128.png"
+	"version": "25.5.28",
+	"description": "Double-click search result links (Google, Brave, DuckDuckGo) for background tabs. Other links in foreground. Customization options.",
+	"icons": { 
+        "32": "icon_32.png",
+        "48": "icon_48.png",
+		"128": "icon_128.png"
 	},
+	"permissions": [
+    "tabs",
+    "activeTab",
+    "storage"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+	  "action": {
+        "default_popup": "popup.html"
+    },
 	"content_scripts": [
-		{
-			"matches": [
-				"<all_urls>"
-			],
-			"js": [
-				"contentscripts.js"
-			],
-			"run_at": "document_start"
-		}
-	]
+        {
+            "matches": [
+                "<all_urls>"
+            ],
+            "js": [
+                "contentscripts.js"
+            ],
+            "run_at": "document_start"
+        }
+    ],
+	
+   "content_security_policy": {
+        "extension_pages": "script-src 'self'; object-src 'self'"
+    }
 }
