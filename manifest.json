@@ -1,8 +1,9 @@
 {
 	"manifest_version": 3,
 	"name": "Pro DoubleClick",
-	"version": "25.5.28",
-	"description": "Double-click search result links (Google, Brave, DuckDuckGo) for background tabs. Other links in foreground. Customization options.",
+	"version": "25.6.10",
+	"description": "Left double click opens links in new tab, downloads images. Manage links with left/right double-click. Extensive customizations",
+    
 	"icons": { 
         "32": "icon_32.png",
         "48": "icon_48.png",
